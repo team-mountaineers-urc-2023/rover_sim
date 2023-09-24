@@ -1,0 +1,192 @@
+<launch>
+
+	<!-- Args to bridge sim and state machine -->
+	<arg name="found_marker_list_topic" default="/found_marker_list" />
+	<arg name="clear_markers_service" default="/clear_found_markers" />
+	<arg name="aruco_fiducial_len" default="0.14"/>
+
+	<!-- Aruco Detect Arguments -->
+
+	<!-- Camera 1 == front Camera -->
+	<!-- /cameras/sim_camera_1/image_raw/compressed -->
+	<arg name="camera1" default="/cameras/sim_camera_1" />
+	<arg name="image1" default="image_raw" />
+	<arg name="transport1" default="compressed" />
+	<arg name="cam1_namespace" default="cameras/sim_camera_1" />
+
+	<!-- Camera 2 == Left Camera -->
+	<!-- /cameras/sim_camera_2/image_raw/compressed -->
+	<arg name="camera2" default="/cameras/sim_camera_2" />
+	<arg name="image2" default="image_raw" />
+	<arg name="transport2" default="compressed" />
+	<arg name="cam2_namespace" default="cameras/sim_camera_2" />
+
+	<!-- Camera 3 == Right Camera -->
+	<!-- /cameras/sim_camera_3/image_raw/compressed -->
+	<arg name="camera3" default="/cameras/sim_camera_3" />
+	<arg name="image3" default="image_raw" />
+	<arg name="transport3" default="compressed" />
+	<arg name="cam3_namespace" default="cameras/sim_camera_3" />
+
+	<!-- Camera 4 == Back Camera -->
+	<!-- /cameras/sim_camera_4/image_raw/compressed -->
+	<arg name="camera4" default="/cameras/sim_camera_4" />
+	<arg name="image4" default="image_raw" />
+	<arg name="transport4" default="compressed" />
+	<arg name="cam4_namespace" default="cameras/sim_camera_4" />
+
+	<!-- Namespace Handling -->
+	<arg name="camera_namespaces_list"
+		value="[$(arg cam1_namespace), $(arg cam2_namespace), $(arg cam3_namespace), $(arg cam4_namespace)]" />
+
+	<!-- Start Sim -->
+	<include file="$(find rover_sim)/launch/world.launch" />
+
+	<!-- No Marker Point at -9, 10 as well -->
+
+	<group ns="marker_0">
+		<param name="tf_prefix" value="marker_0_tf" />
+		<include file="$(find aruco_sim)/launch/arucoSpawner.launch">
+			<arg name="file_name" value="arucoMarker0.dae" />
+			<arg name="model_name" value="Marker0" />
+			<arg name="node_name" value="Marker0_spawner" />
+			<arg name="x" value="-6.00" />
+			<arg name="y" value="-9.00" />
+		</include>
+	</group>
+
+	<group ns="marker_1">
+		<param name="tf_prefix" value="marker_1_tf" />
+		<include file="$(find aruco_sim)/launch/arucoSpawner.launch">
+			<arg name="file_name" value="arucoMarker1.dae" />
+			<arg name="model_name" value="Marker1" />
+			<arg name="node_name" value="Marker1_spawner" />
+			<arg name="x" value="6.00" />
+			<arg name="y" value="-9.00" />
+		</include>
+	</group>
+
+	<group ns="marker_2">
+		<param name="tf_prefix" value="marker_2_tf" />
+		<include file="$(find aruco_sim)/launch/arucoSpawner.launch">
+			<arg name="file_name" value="arucoMarker2.dae" />
+			<arg name="model_name" value="Marker2" />
+			<arg name="node_name" value="Marker2_spawner" />
+			<arg name="x" value="4.00" />
+			<arg name="y" value="10.00" />
+		</include>
+	</group>
+
+	<group ns="marker_3">
+		<param name="tf_prefix" value="marker_3_tf" />
+		<include file="$(find aruco_sim)/launch/arucoSpawner.launch">
+			<arg name="file_name" value="arucoMarker3.dae" />
+			<arg name="model_name" value="Marker3" />
+			<arg name="node_name" value="Marker3_spawner" />
+			<arg name="x" value="6.00" />
+			<arg name="y" value="10.00" />
+		</include>
+	</group>
+
+	<group ns="marker_4">
+		<param name="tf_prefix" value="marker_4_tf" />
+		<include file="$(find aruco_sim)/launch/arucoSpawner.launch">
+			<arg name="file_name" value="arucoMarker4.dae" />
+			<arg name="model_name" value="Marker4" />
+			<arg name="node_name" value="Marker4_spawner" />
+			<arg name="x" value="-6.00" />
+			<arg name="y" value="2.00" />
+		</include>
+	</group>
+
+	<!-- aruco_detect on camera_1 -->
+	<node pkg="aruco_detect" name="aruco_detect_cam1" type="aruco_detect" output="log"
+		respawn="false" ns="$(arg cam1_namespace)">
+		<param name="image_transport" value="$(arg transport1)" />
+		<param name="publish_images" value="true" />
+		<param name="fiducial_len" value="$(arg aruco_fiducial_len)" />
+		<param name="dictionary" value="0" />
+		<param name="do_pose_estimation" value="true" />
+		<param name="vis_msgs" value="false" />
+		<param name="ignore_fiducials" value="" />
+		<param name="fiducial_len_override" value="" />
+		<param name="verbose" value="true" />
+		<remap from="camera/compressed"
+			to="$(arg camera1)/$(arg image1)/$(arg transport1)" />
+		<remap from="camera_info" to="$(arg camera1)/camera_info" />
+	</node>
+
+	<!-- aruco_detect on camera_2 -->
+	<node pkg="aruco_detect" name="aruco_detect_cam2" type="aruco_detect" output="log"
+		respawn="false" ns="$(arg cam2_namespace)">
+		<param name="image_transport" value="$(arg transport2)" />
+		<param name="publish_images" value="true" />
+		<param name="fiducial_len" value="$(arg aruco_fiducial_len)" />
+		<param name="dictionary" value="0" />
+		<param name="do_pose_estimation" value="true" />
+		<param name="vis_msgs" value="false" />
+		<param name="ignore_fiducials" value="" />
+		<param name="fiducial_len_override" value="" />
+		<param name="verbose" value="true" />
+		<remap from="camera/compressed"
+			to="$(arg camera2)/$(arg image2)/$(arg transport2)" />
+		<remap from="camera_info" to="$(arg camera2)/camera_info" />
+	</node>
+
+	<!-- aruco_detect on camera_3 -->
+	<node pkg="aruco_detect" name="aruco_detect_cam3" type="aruco_detect" output="log"
+		respawn="false" ns="$(arg cam3_namespace)">
+		<param name="image_transport" value="$(arg transport3)" />
+		<param name="publish_images" value="true" />
+		<param name="fiducial_len" value="$(arg aruco_fiducial_len)" />
+		<param name="dictionary" value="0" />
+		<param name="do_pose_estimation" value="true" />
+		<param name="vis_msgs" value="false" />
+		<param name="ignore_fiducials" value="" />
+		<param name="fiducial_len_override" value="" />
+		<param name="verbose" value="true" />
+		<remap from="camera/compressed"
+			to="$(arg camera3)/$(arg image3)/$(arg transport3)" />
+		<remap from="camera_info" to="$(arg camera3)/camera_info" />
+	</node>
+
+	<!-- aruco_detect on camera_4 -->
+	<node pkg="aruco_detect" name="aruco_detect_cam4" type="aruco_detect" output="log"
+		respawn="false" ns="$(arg cam4_namespace)">
+		<param name="image_transport" value="$(arg transport2)" />
+		<param name="publish_images" value="true" />
+		<param name="fiducial_len" value="$(arg aruco_fiducial_len)" />
+		<param name="dictionary" value="0" />
+		<param name="do_pose_estimation" value="true" />
+		<param name="vis_msgs" value="false" />
+		<param name="ignore_fiducials" value="" />
+		<param name="fiducial_len_override" value="" />
+		<param name="verbose" value="true" />
+		<remap from="camera/compressed"
+			to="$(arg camera4)/$(arg image4)/$(arg transport4)" />
+		<remap from="camera_info" to="$(arg camera4)/camera_info" />
+	</node>
+
+	<include file="$(find aruco_finder)/launch/aruco_finder.launch">
+		<arg name="found_marker_list_topic" value="$(arg found_marker_list_topic)" />
+		<arg name="clear_markers_service" value="$(arg clear_markers_service)" />
+		<arg name="camera_namespaces" value="$(arg camera_namespaces_list)" />
+	</include>
+
+	<!-- Camera 1 TF Correction -->
+	<node pkg="tf2_ros" type="static_transform_publisher" name="rot_camera1"
+		args="0 0 0 -1.57 0 -1.57 camera_1 camera_1rot" />
+
+	<!-- Camera 2 TF Correction -->
+	<node pkg="tf2_ros" type="static_transform_publisher" name="rot_camera2"
+		args="0 0 0 -1.57 0 -1.57 camera_2 camera_2rot" />
+
+	<!-- Camera 3 TF Correction -->
+	<node pkg="tf2_ros" type="static_transform_publisher" name="rot_camera3"
+		args="0 0 0 -1.57 0 -1.57 camera_3 camera_3rot" />
+
+	<!-- Camera 4 TF Correction -->
+	<node pkg="tf2_ros" type="static_transform_publisher" name="rot_camera4"
+		args="0 0 0 -1.57 0 -1.57 camera_4 camera_4rot" />
+
+</launch>

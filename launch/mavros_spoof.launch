@@ -1,0 +1,25 @@
+<launch>
+	<!-- sim and mavrosSpoofer args args -->
+	<arg name="sim_local_poses_topic" default="/odom"/>
+
+	<!-- pixhawk_localization args -->
+	<arg name="local_position_topic" default="/current_pose"/>
+	<arg name="global_position_topic" default="/current_global_pose"/>
+	<arg name="global_origin_topic" default="/global_origin"/>
+
+	<arg name="sim_robot_name" value="wanderer"/>
+	<arg name="default_lat" value="39.645798317986774"/>
+	<arg name="default_lon" value="-79.97237683887253"/>
+
+	<!-- launch pixhawk_localization to pass Pose information to localization_topic -->
+	<node pkg="rover_sim" name="mavrosSpoofer"
+	type="mavrosSpoofer.py" output="screen" respawn="false">
+		<param name="sim_local_poses_topic" value="$(arg sim_local_poses_topic)"/>
+		<param name="local_position_topic" value="$(arg local_position_topic)"/>
+		<param name="global_position_topic" value="$(arg global_position_topic)"/>
+		<param name="global_origin_topic" value="$(arg global_origin_topic)"/>
+		<param name="sim_robot_name" value="$(arg sim_robot_name)"/>
+		<param name="default_lat" value="$(arg default_lat)"/>
+		<param name="default_lon" value="$(arg default_lon)"/>
+	</node>
+</launch>
